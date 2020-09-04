@@ -1,0 +1,1 @@
+export const baseUrl = `https://api.raisely.com/v3/signup`
