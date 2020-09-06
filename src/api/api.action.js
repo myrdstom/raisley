@@ -1,15 +1,13 @@
-import {toast} from "react-toastify";
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
-export const apiRequest = (baseUrl, data) =>{
+export const apiRequest = (baseUrl, data) => {
     axios
         .post(baseUrl, data)
         .then((res) => {
-            toast.success('please search for a fact');
-            console.log(res, 'the response');
+            toast.success(`${res.data.message}`);
         })
         .catch((err) => {
             toast.error(`${err.response.data.errors[0].message}`);
-
         });
-}
+};

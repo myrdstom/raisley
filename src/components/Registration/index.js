@@ -1,55 +1,52 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Register from './register';
-import uuid from 'react-uuid';
-
 import { baseUrl } from '../../config/config';
-import {apiRequest} from "../../api/api.action";
+import { apiRequest } from '../../api/api.action';
+import { useFormik } from 'formik';
+import './registration.styles.scss';
+import * as Yup from 'yup';
 
-
-const RegisterView = ({}) => {
-    const [user, setUser] = useState({
-        campaignUuid: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
+const RegisterView = () => {
+    const formik = useFormik({
+        initialValues: { firstName: '', lastName: '', email: '', password: '' },
+        validationSchema: Yup.object({
+            firstName: Yup.string()
+                .required('First name required'),
+            lastName: Yup.string()
+                .required('Last name required'),
+            email: Yup.string()
+                .email('Invalid email address')
+                .required('Email required'),
+            password: Yup.string()
+                .required('password required'),
+        }),
+        onSubmit: (values) => {
+            const { firstName, lastName, email, password } = values;
+            const jsonData = {
+                campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
+                data: {
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                },
+            };
+            apiRequest(baseUrl, jsonData);
+        },
     });
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setUser((prevState) => ({
-            ...prevState,
-            [id]: value,
-        }));
-    };
-
-    const onSubmit = (e) => {
-        e.preventDefault();
-        const { firstName, lastName, email, password } = user;
-        const randomUUID = uuid();
-        const jsonData = {
-            campaignUuid: '46aa3270-d2ee-11ea-a9f0-e9a68ccff42a',
-            data: {
-                firstName,
-                lastName,
-                email,
-                password,
-            },
-        };
-       apiRequest(baseUrl, jsonData)
-
-    };
-
-    const { firstName, lastName, email, password } = user;
 
     return (
         <div>
             <Register
-                firstName={firstName}
-                onChange={handleChange}
-                lastName={lastName}
-                email={email}
-                password={password}
-                onSubmit={onSubmit}
+                firstName={formik.values.firstName}
+                onChange={formik.handleChange}
+                lastName={formik.values.lastName}
+                email={formik.values.email}
+                password={formik.values.password}
+                onSubmit={formik.handleSubmit}
+                onBlur={formik.handleBlur}
+                errors={formik.errors}
+                touched={formik.touched}
             />
         </div>
     );
